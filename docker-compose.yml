@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  eczaev:
+    container_name: eczaev
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8031:8031"
+    volumes:
+      - .:/eczaev
+    command: >
+      sh -c "python manage.py wait_for_db && 
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8031"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=eczaev
+      - DB_USER=postgres
+      - DB_PASS=testpassword
+    depends_on:
+      - db
+
+  db:
+    container_name: eczaev_postgres
+    image: postgres:15-alpine
+    command: postgres -c shared_buffers=256MB -c max_connections=200
+    environment:
+      - POSTGRES_DB=eczaev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=testpassword
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
