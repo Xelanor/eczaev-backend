@@ -57,12 +57,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+# Pharmacy Profile Model (Updated)
 class PharmacyProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     pharmacy_name = models.CharField(max_length=255)
-    license_number = models.CharField(max_length=100)
+    responsible_person = models.CharField(max_length=100)  # Sorumlu kişi adı soyadı
     address = models.TextField()
-    # Add more pharmacy-specific fields
+    gln_number = models.CharField(max_length=13, unique=True)  # GLN No
+    daily_job = models.BooleanField(default=False)  # Günlük iş istiyorum
+    permanent_job = models.BooleanField(default=False)  # Kalıcı iş istiyorum
 
     def __str__(self):
         return self.pharmacy_name
@@ -70,10 +73,15 @@ class PharmacyProfile(models.Model):
 
 class TechnicianProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    certification_number = models.CharField(max_length=100)
-    years_of_experience = models.IntegerField()
-    skills = models.TextField()
-    # Add more technician-specific fields
+    name = models.CharField(max_length=200)  # Ad ve soyadı tek bir alanda saklıyoruz
+    district = models.CharField(max_length=100)  # İlçe
+    birth_date = models.DateField(null=True, blank=True)  # Optional
+    phone_number = models.CharField(max_length=15)
+    national_id = models.CharField(
+        max_length=11, unique=True, null=True, blank=True
+    )  # TC Kimlik No opsiyonel
+    daily_job = models.BooleanField(default=False)  # Günlük iş istiyorum
+    permanent_job = models.BooleanField(default=False)  # Kalıcı iş istiyorum
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+        return self.name
