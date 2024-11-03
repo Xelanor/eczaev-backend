@@ -38,7 +38,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ("technician", "Technician"),
     )
 
-    email = models.EmailField(_("email address"), unique=True)
+    email = models.EmailField(
+        _("email address"),
+        unique=True,
+        error_messages={
+            "unique": _("Bu e-posta adresiyle kayıtlı bir kullanıcı zaten mevcut."),
+        },
+    )
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     is_active = models.BooleanField(default=True)
